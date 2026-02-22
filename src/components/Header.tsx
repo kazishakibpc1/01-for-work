@@ -97,9 +97,9 @@ export function Header() {
       <nav className="flex items-center gap-2 p-2 bg-white/80 dark:bg-[#161B22]/80 backdrop-blur-md border border-black/5 dark:border-white/10 rounded-full shadow-sm transition-all duration-300 max-w-6xl w-full justify-between">
         
         {/* Logo */}
-        <div className="pl-4 pr-2 cursor-pointer" onClick={() => scrollToSection("home")}>
-          <span className="font-bold text-lg tracking-tight text-foreground">
-            THE KAZI SHAKIB
+        <div className="pl-4 pr-2 cursor-pointer group" onClick={() => scrollToSection("home")}>
+          <span className="font-bold text-xl tracking-tighter text-foreground group-hover:text-accent transition-colors">
+            THE KAZI SHAKIB<span className="text-accent">.</span>
           </span>
         </div>
 
