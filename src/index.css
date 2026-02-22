@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-secondary: var(--secondary);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+}
+
+:root {
+  /* Light Mode */
+  --background: #FAFAFA;
+  --foreground: #1A1A1B;
+  --accent: #0056B3;
+  --secondary: #6C757D;
+  --card: #FFFFFF;
+  --card-foreground: #1A1A1B;
+  --border: #E5E7EB;
+}
+
+.dark {
+  /* Dark Mode */
+  --background: #0D1117;
+  --foreground: #E6EDF3;
+  --accent: #58A6FF;
+  --secondary: #8B949E;
+  --card: #161B22;
+  --card-foreground: #E6EDF3;
+  --border: #30363D;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  font-weight: 700; /* Bold for headings */
+  letter-spacing: -0.02em; /* Tight tracking for modern look */
+}
