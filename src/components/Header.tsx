@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { 
   Briefcase, 
@@ -12,7 +12,8 @@ import {
   Home,
   User,
   Brain,
-  Mail
+  Mail,
+  BookOpen
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { cn } from "../lib/utils";
@@ -41,21 +42,62 @@ export function Header() {
   const [activeTab, setActiveTab] = useState("Home");
 
   const navItems = [
-    { name: "Home", icon: Home },
-    { name: "About", icon: User },
-    { name: "Academics", icon: GraduationCap },
-    { name: "Experience", icon: Briefcase },
-    { name: "Skills", icon: Brain },
-    { name: "Awards", icon: Trophy },
-    { name: "Contact", icon: Mail },
+    { name: "Home", id: "home", icon: Home },
+    { name: "About", id: "about", icon: User },
+    { name: "Academics", id: "academics", icon: GraduationCap },
+    { name: "Experience", id: "experience", icon: Briefcase },
+    { name: "Skills", id: "skills", icon: Brain },
+    { name: "Awards", id: "awards", icon: Trophy },
+    { name: "Blog", id: "blog", icon: BookOpen },
+    { name: "Contact", id: "contact", icon: Mail },
   ];
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const offset = 100; // Height of header + padding
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }
+    setActiveTab(navItems.find(item => item.id === id)?.name || "Home");
+    setIsMobileMenuOpen(false);
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 150; // Offset for header trigger
+
+      for (const item of navItems) {
+        const element = document.getElementById(item.id);
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (
+            scrollPosition >= offsetTop &&
+            scrollPosition < offsetTop + offsetHeight
+          ) {
+            setActiveTab(item.name);
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <header className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
       <nav className="flex items-center gap-2 p-2 bg-white/80 dark:bg-[#161B22]/80 backdrop-blur-md border border-black/5 dark:border-white/10 rounded-full shadow-sm transition-all duration-300 max-w-6xl w-full justify-between">
         
         {/* Logo */}
-        <div className="pl-4 pr-2">
+        <div className="pl-4 pr-2 cursor-pointer" onClick={() => scrollToSection("home")}>
           <span className="font-bold text-lg tracking-tight text-foreground">
             THE KAZI SHAKIB
           </span>
@@ -66,7 +108,7 @@ export function Header() {
           {navItems.map((item) => (
             <button
               key={item.name}
-              onClick={() => setActiveTab(item.name)}
+              onClick={() => scrollToSection(item.id)}
               className={cn(
                 "relative px-4 py-2 rounded-full text-sm font-medium transition-colors tracking-wide",
                 activeTab === item.name 
@@ -126,10 +168,7 @@ export function Header() {
             {navItems.map((item) => (
               <button
                 key={item.name}
-                onClick={() => {
-                  setActiveTab(item.name);
-                  setIsMobileMenuOpen(false);
-                }}
+                onClick={() => scrollToSection(item.id)}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors",
                   activeTab === item.name 
