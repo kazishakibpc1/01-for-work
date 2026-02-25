@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { Link, useLocation } from "react-router-dom";
 import { 
   Briefcase, 
   ChevronDown, 
@@ -39,76 +40,47 @@ const KnightIcon = ({ className }: { className?: string }) => (
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("Home");
 
   const navItems = [
-    { name: "Home", id: "home", icon: Home },
-    { name: "About", id: "about", icon: User },
-    { name: "Academics", id: "academics", icon: GraduationCap },
-    { name: "Experience", id: "experience", icon: Briefcase },
-    { name: "Skills", id: "skills", icon: Brain },
-    { name: "Awards", id: "awards", icon: Trophy },
-    { name: "Blog", id: "blog", icon: BookOpen },
-    { name: "Contact", id: "contact", icon: Mail },
+    { name: "Home", path: "/", icon: Home },
+    { name: "About", path: "/about", icon: User },
+    { name: "Academics", path: "/academics", icon: GraduationCap },
+    { name: "Experience", path: "/experience", icon: Briefcase },
+    { name: "Skills", path: "/skills", icon: Brain },
+    { name: "Awards", path: "/awards", icon: Trophy },
+    { name: "Blog", path: "/blog", icon: BookOpen },
+    { name: "Contact", path: "/contact", icon: Mail },
   ];
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      const offset = 100; // Height of header + padding
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = element.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth"
-      });
-    }
-    setActiveTab(navItems.find(item => item.id === id)?.name || "Home");
-    setIsMobileMenuOpen(false);
-  };
-
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + 150; // Offset for header trigger
-
-      for (const item of navItems) {
-        const element = document.getElementById(item.id);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (
-            scrollPosition >= offsetTop &&
-            scrollPosition < offsetTop + offsetHeight
-          ) {
-            setActiveTab(item.name);
-          }
-        }
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    const currentPath = location.pathname;
+    const activeItem = navItems.find(item => item.path === currentPath);
+    if (activeItem) {
+      setActiveTab(activeItem.name);
+    } else if (currentPath === "/") {
+      setActiveTab("Home");
+    }
+  }, [location]);
 
   return (
     <header className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
       <nav className="flex items-center gap-2 p-2 bg-white/80 dark:bg-[#161B22]/80 backdrop-blur-md border border-black/5 dark:border-white/10 rounded-full shadow-sm transition-all duration-300 max-w-6xl w-full justify-between">
         
         {/* Logo */}
-        <div className="pl-4 pr-2 cursor-pointer group" onClick={() => scrollToSection("home")}>
+        <Link to="/" className="pl-4 pr-2 cursor-pointer group">
           <span className="font-bold text-xl tracking-tighter text-foreground group-hover:text-accent transition-colors">
             THE KAZI SHAKIB<span className="text-accent">.</span>
           </span>
-        </div>
+        </Link>
 
         {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-1">
           {navItems.map((item) => (
-            <button
+            <Link
               key={item.name}
-              onClick={() => scrollToSection(item.id)}
+              to={item.path}
               className={cn(
                 "relative px-4 py-2 rounded-full text-sm font-medium transition-colors tracking-wide",
                 activeTab === item.name 
@@ -125,7 +97,7 @@ export function Header() {
                 />
               )}
               {item.name}
-            </button>
+            </Link>
           ))}
         </div>
 
@@ -166,9 +138,10 @@ export function Header() {
             className="absolute top-20 left-4 right-4 bg-white dark:bg-[#161B22] rounded-2xl shadow-xl border border-black/5 dark:border-white/10 p-4 flex flex-col gap-2 lg:hidden"
           >
             {navItems.map((item) => (
-              <button
+              <Link
                 key={item.name}
-                onClick={() => scrollToSection(item.id)}
+                to={item.path}
+                onClick={() => setIsMobileMenuOpen(false)}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors",
                   activeTab === item.name 
@@ -178,7 +151,7 @@ export function Header() {
               >
                 <item.icon className="w-4 h-4" />
                 {item.name}
-              </button>
+              </Link>
             ))}
             <div className="h-px bg-black/5 dark:bg-white/10 my-2" />
             <div className="flex justify-around p-2">
